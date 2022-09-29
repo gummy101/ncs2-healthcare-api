@@ -1,0 +1,38 @@
+version: '1'
+services:
+ mysql:
+  image: mysql:5.7.18
+  container_name: ehealthmysqldb
+  environment:
+   MYSQL_USER: ehealthadmin
+   MYSQL_PASSWORD: Jasmine1$
+   MYSQL_DATABASE: ehealth
+ volumes:
+   - ./mysql-data:/var/lib/mysql
+ restart: always
+ networks:
+   - FSD
+ ehealthapi:
+  image: ehealthapi
+  build:
+   context: ./healthcareapi
+   dockerfile: Dockerfile
+  depends_on:
+   - mysql
+  networks:
+   - FSD
+ ehealthui:
+  image: ehealthui
+  build:
+   context: ./ehelui
+   dockerfile: Dockerfile
+  depends_on:
+    - mysql
+    - ehealthapi
+  networks:
+   - FSD
+volumes:
+ mysql-data:
+networks:
+ FSD:
+  driver: bridge
